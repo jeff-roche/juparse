@@ -14,6 +14,7 @@ var (
 	skipped *bool   = flag.Bool("skipped", false, "Filters to show skipped tests")
 	passed  *bool   = flag.Bool("passed", false, "Filters to show passed tests")
 	failed  *bool   = flag.Bool("failed", false, "Filteres to show failed tests")
+	verbose *bool   = flag.Bool("v", false, "Print the reason it failed or was skipped")
 )
 
 func main() {
@@ -67,10 +68,18 @@ func processOutput(suite *parser.TestSuite) {
 
 		if *skipped && tc.WasSkipped() {
 			tc.Print()
+
+			if *verbose {
+				fmt.Printf("\t%s\n", tc.Skipped.Message)
+			}
 		}
 
 		if *failed && tc.Failed() {
 			tc.Print()
+
+			if *verbose {
+				fmt.Printf("\t%s\n", tc.Failure)
+			}
 		}
 
 		if *passed && tc.Passed() {
