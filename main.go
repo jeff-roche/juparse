@@ -64,6 +64,17 @@ func processOutput(suite *parser.TestSuite) {
 	for _, tc := range suite.TestCases {
 		if showAll {
 			tc.Print()
+
+			if *verbose {
+				if tc.WasSkipped() {
+					fmt.Printf("\t%s\n", tc.Skipped.Message)
+				}
+
+				if tc.Failed() {
+					fmt.Printf("\t%s\n", tc.Failure)
+				}
+			}
+
 		}
 
 		if *skipped && tc.WasSkipped() {
