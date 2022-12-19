@@ -2,6 +2,7 @@ package parser
 
 import (
 	"encoding/xml"
+	"io"
 
 	"github.com/jeff-roche/juparse/lgr"
 )
@@ -21,15 +22,16 @@ func (ts TestSuite) Passed() int {
 }
 
 type TestCase struct {
-	XMLName xml.Name    `xml:"testcase"`
-	Name    string      `xml:"name,attr"`
-	Time    float64     `xml:"time,attr"`
-	Output  string      `xml:"system-out"`
-	Skipped SkippedTest `xml:"skipped"`
-	Failure string      `xml:"failure"`
+	XMLName     xml.Name    `xml:"testcase"`
+	Name        string      `xml:"name,attr"`
+	Time        float64     `xml:"time,attr"`
+	Output      string      `xml:"system-out"`
+	Skipped     SkippedTest `xml:"skipped"`
+	Failure     string      `xml:"failure"`
+	OutputColor bool
 }
 
-func (tc TestCase) Print() {
+func (tc TestCase) Print(wrt io.Writer, color bool) {
 	lvl := lgr.PASSED
 
 	if tc.WasSkipped() {
@@ -40,7 +42,7 @@ func (tc TestCase) Print() {
 		lvl = lgr.FAILURE
 	}
 
-	lgr.LogTestStatus(lvl, tc.Name)
+	lgr.LogTestStatus(lvl, tc.Name, wrt, color)
 }
 
 func (tc TestCase) WasSkipped() bool {
